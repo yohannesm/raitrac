@@ -12,6 +12,9 @@
 
 #define PI 3.14159265358979323846264338327
 
+
+
+
 /* data structures */
 
 typedef struct point {
@@ -37,6 +40,9 @@ typedef struct material {
   GLfloat b; 
   /* ambient reflectivity */
   GLfloat amb;
+  GLfloat dif;
+  GLfloat spe;
+  GLfloat shi;
 } material;
 
 typedef struct color {
@@ -52,10 +58,26 @@ typedef struct sphere {
   material* m;
 } sphere;
 
+typedef struct light {
+  GLfloat x;
+  GLfloat y;
+  GLfloat z;
+  
+  GLfloat r;
+  GLfloat g;
+  GLfloat b; 
+  
+  GLfloat i;
+} light;
+
+
+
 /* functions in raytrace.cpp */
 void traceRay(ray*, color*, int);
 
 /* functions in geometry.cpp */
+GLfloat dotProd (vector* v0, vector* v1);
+void normalize(vector* v);
 sphere* makeSphere(GLfloat, GLfloat, GLfloat, GLfloat);
 point* makePoint(GLfloat, GLfloat, GLfloat);
 point* copyPoint(point *);
@@ -66,8 +88,9 @@ int raySphereIntersect(ray*,sphere*,double*);
 void findSphereNormal(sphere*,point*,vector*);
 
 /* functions in light.cpp */
-material* makeMaterial(GLfloat, GLfloat, GLfloat, GLfloat);
-void shade(point*,vector*,material*,vector*,color*,int);
+light* makeLight(GLfloat x, GLfloat y, GLfloat z, GLfloat r, GLfloat g, GLfloat b, GLfloat i);
+material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif, GLfloat spe, GLfloat shi);
+void shade(point*,vector*,material*,vector*,color*,int,light*);
 
 /* global variables */
 extern int width;
