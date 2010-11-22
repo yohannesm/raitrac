@@ -58,7 +58,16 @@ void calculateDirection(point* p, point* q, point* v) {
 
 /* given a vector, sets its contents to unit length */
 void normalize(vector* v) {
-	/* PUT YOUR CODE HERE */
+	GLfloat mag = sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
+	v->x /= mag;
+	v->y /= mag;
+	v->z /= mag;
+}
+
+GLfloat dotProd (vector* v0, vector* v1)
+{
+  GLfloat result = v0->x * v1->x + v0->y * v1->y + v0->z * v1->z;
+  return result;
 }
 
 /* point on ray r parameterized by t is returned in p */

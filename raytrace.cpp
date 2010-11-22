@@ -29,6 +29,7 @@ void firstHit(ray*,point*,vector*,material**);
 
 /* the scene: so far, just one sphere */
 sphere* s1;
+light* l1;
 
 /* the viewing parameters: */
 point* viewpoint;
@@ -76,8 +77,10 @@ void display() {
 }
 
 void initScene () {
+  l1 = makeLight(2, 2, 2, 1, 1, 1, .1);
   s1 = makeSphere(0.0,0.0,-2.0,0.25);
-  s1->m = makeMaterial(1.0,0.1,0.15,0.3);
+  s1->m = makeMaterial(0.0,0.1,1,0.3,0.9,1,125);
+  
 }
 
 void initCamera (int w, int h) {
@@ -141,7 +144,7 @@ void traceRay(ray* r, color* c, int d) {
   firstHit(r,&p,&n,&m);
 
   if (p.w != 0.0) {
-    shade(&p,&n,m,r->dir,c,d);  /* do the lighting calculations */
+    shade(&p,&n,m,r->dir,c,d,l1);  /* do the lighting calculations */
   } else {             /* nothing was hit */
     c->r = 0.0;
     c->g = 0.0;
