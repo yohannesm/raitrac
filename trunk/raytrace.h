@@ -11,7 +11,7 @@
 #define FALSE 0
 
 #define PI 3.14159265358979323846264338327
-
+#include <vector>
 
 
 
@@ -90,7 +90,7 @@ void findSphereNormal(sphere*,point*,vector*);
 /* functions in light.cpp */
 light* makeLight(GLfloat x, GLfloat y, GLfloat z, GLfloat r, GLfloat g, GLfloat b, GLfloat i);
 material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif, GLfloat spe, GLfloat shi);
-void shade(point*,vector*,material*,vector*,color*,int,light*);
+void shade(point*,vector*,material*,vector*,color*,int, std::vector<light*>&);
 
 /* global variables */
 extern int width;
