@@ -58,6 +58,14 @@ typedef struct sphere {
   material* m;
 } sphere;
 
+typedef struct ellipsoid{
+   point* f1; //focal pt 1
+   point* f2; //focal pt 2
+   GLfloat a;
+   GLfloat b;
+   material * m;
+} ellipsoid;
+
 typedef struct light {
   GLfloat x;
   GLfloat y;
@@ -79,6 +87,7 @@ void traceRay(ray*, color*, int);
 GLfloat dotProd (vector* v0, vector* v1);
 void normalize(vector* v);
 sphere* makeSphere(GLfloat, GLfloat, GLfloat, GLfloat);
+ellipsoid* makeEllipsoid(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
 point* makePoint(GLfloat, GLfloat, GLfloat);
 point* copyPoint(point *);
 void freePoint(point *);
@@ -86,6 +95,8 @@ void calculateDirection(point*,point*,point*);
 void findPointOnRay(ray*,double,point*);
 int raySphereIntersect(ray*,sphere*,double*);
 void findSphereNormal(sphere*,point*,vector*);
+int rayEllipsoidIntersect(ray*,ellipsoid*,double*);
+void findEllipsoidNormal(ellipsoid*,point*,vector*);
 
 /* functions in light.cpp */
 light* makeLight(GLfloat x, GLfloat y, GLfloat z, GLfloat r, GLfloat g, GLfloat b, GLfloat i);
