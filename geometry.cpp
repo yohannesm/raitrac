@@ -93,6 +93,23 @@ sphere* makeSphere(GLfloat x, GLfloat y, GLfloat z, GLfloat r) {
   return(s);
 }
 
+ellipsoid* makeEllipsoid (GLfloat x1, GLfloat y1, GLfloat z1, GLfloat a,
+                          GLfloat x2, GLfloat y2, GLfloat z2, GLfloat b) {
+  ellipsoid* e;
+  /* allocate memory */
+  e = (ellipsoid*) malloc(sizeof(ellipsoid));
+
+  /* put stuff in it */
+  e->f1 = makePoint(x1, y1, z1);
+  e->f2 = makePoint(x2, y2, z2);
+  e->a = a;   /* radius */
+  e->b = b;   /* radius */
+  e->m = NULL;   /* material */
+  return(e);
+}
+
+
+
 /* returns TRUE if ray r hits sphere s, with parameter value in t */
 int raySphereIntersect(ray* r,sphere* s,double* t) {
   point p;   /* start of transformed ray */
@@ -137,6 +154,67 @@ void findSphereNormal(sphere* s, point* p, vector* n) {
   n->x = (p->x - s->c->x) / s->r;  
   n->y = (p->y - s->c->y) / s->r;
   n->z = (p->z - s->c->z) / s->r;
+  n->w = 0.0;
+}
+/*
+vector* normalize(vector* v){
+    GLfloat mag = sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
+    vector* result = makePoint(v->x/mag, v->y/mag, v->z/mag);
+    return result;
+}*/
+
+int rayEllipsoidIntersect(ray* r,ellipsoid* e,double* t) {
+  vector p1, p2;   /* start of transformed ray */
+  double a,b,c;  /* coefficients of quadratic equation */
+  double D;    /* discriminant */
+  point* d;
+
+  double a2 = e->a * e->a;
+  double b2 = e->b * e->b;
+  double a2b2 = a2 * b2;
+  
+  /* transform ray so that ellipsoid center is at origin */
+  /* don't use matrix, just translate! */
+  p1.x = r->start->x - e->f1->x;
+  p1.y = r->start->y - e->f1->y;
+  p1.z = r->start->z - e->f1->z;
+  p2.x = r->start->x - e->f2->x;
+  p2.y = r->start->y - e->f2->y;
+  p2.z = r->start->z - e->f2->z;
+  d = makePoint(r->dir->x, r->dir->y, r->dir->z);
+  normalize(d);
+
+  a = ( e->a * e->a  +  e->b * e->b) / a2b2;
+  b = b2 * ( 2*dotProd( &p1, d) ) + a2 * (2*dotProd(&p2, d))   ; 
+  b /= a2b2;
+  c = b2 * (dotProd(&p1, &p1) ) + a2 * (dotProd(&p2, &p2))   ; 
+  c = c / a2b2 - 1;
+
+  D = b * b - 4 * a * c;
+  
+  freePoint(d);
+  if (D < 0) {  /* no intersection */
+    return (FALSE);
+  }
+  else {
+    D = sqrt(D);
+    /* First check the root with the lower value of t: */
+    /* this one, since D is positive */
+    *t = (-b - D) / (2*a);
+    /* ignore roots which are less than zero (behind viewpoint) */
+    if (*t < 0) {
+      *t = (-b + D) / (2*a);
+    }
+    if (*t < 0) { return(FALSE); }
+    else return(TRUE);
+  }
+}
+
+/* normal vector of s at p is returned in n */
+void findEllipsoidNormal(ellipsoid* e, point* p, vector* n) {
+  n->x = (2*p->x) / (e->a * e->a);  
+  n->y = (2*p->y) / (e->b * e->b);  
+  n->z = (2*p->z);
   n->w = 0.0;
 }
 

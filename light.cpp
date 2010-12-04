@@ -63,7 +63,7 @@ void shade(point* p, vector* n, material* m, vector* in, color* c, int d, std::v
   c->g = m->amb * m->g;
   c->b = m->amb * m->b;
 
-for(int i=0; i<lights.size(); i++){
+for(uint i=0; i<lights.size(); i++){
   // do diffuse
   // this will change to a for loop with multiple lights
   vector* lightVec = makePoint(lights[i]->x - p->x, lights[i]->y - p->y, lights[i]->z - p->z);
