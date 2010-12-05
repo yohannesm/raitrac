@@ -190,7 +190,6 @@ void firstHit(ray* r, point* p, vector* n, material* *m) {
    int boundPlane = 2;
   hits[0] = raySphereIntersect(r,s1,&ttemp[0]);
   hits[1] =  rayCylinderIntersect(r, c1, &ttemp[1]);
-  if(hits[0] || hits[1]) printf("hits \n");
   hits[2] =  rayPlaneIntersect(r, p1, &ttemp[2]);
   int val = findMin(ttemp, hits, 3);
   double t = 0;
@@ -200,7 +199,6 @@ void firstHit(ray* r, point* p, vector* n, material* *m) {
     if(val <= boundSphere){
       *m = s1->m;
       findSphereNormal(s1,p,n);
-      printf("sphere \n ");
    }
    else if(val <= boundCyl){
     *m = c1->m;

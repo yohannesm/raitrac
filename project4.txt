@@ -1,14 +1,22 @@
 Project 4 Individual Written Questions 
 
-Name:
-Email Address:
+Name:Yohannes Himawan
+Email Address:yohannes.marcell@gmail.com
 
 1.
+ a.No change since we have the same amount of grid of pixel to calculate because we are on the perspective view. 
+ b.Decreased,  Because of the size of the object is increased that means those objects will fill up most of the scene and the intersection between objects computation wouldn't be as heavy as before when the objects were smaller. 
+ c.Increased, Because now the ray that bounces off an object might hit a lot of other objects so that would increase the computation time. 
 
 
 2.
+a.Reflection = reflections on openGL would just be the blended re-rendering of any objects we have on the scene on the specific reflective plane. We could also use texture mapping mixed with blending for the reflection on an object. This would be better be done in openGL since openGL supports blending and texture mapping nicely already. 
+b.Transparency = We can implement transparency in openGL by using the blending feature too. On the ray tracer we just make out lights that fall on the object to pass through the object but with openGL blending feature we will have better results of transparency but our code will be much more complicated because we need to render the object twice and we need to reverse the z-order in the z-buffer to achieve this capability. We need to render it twice, first time with the lights of to achieve the blending and the second time to get the real image. In short it's easier to leave this with the ray-tracer instead of openGL. 
+c.Shadows = Shadows can be approximated in openGL using the stenciling capabilityof openGL. I think this effect are better suited for just the ray tracer because it's far more complicated to do shadows in openGL. for the ray tracer you just have to check whether there's an object in between the points and a light source while doing it in openGL requires a lot of intermediate stuff using the stencil buffer and backface Culling algorithm. 
 
 
-3.
+3.First we need a way to communicate the rays between lattices for this algorithm model. We can parallelized each ray because each ray is independent after we shoot the first initial ray and each lattices can compute all the shadows, reflections, transparency of the object and render each object that are contained in the lattices independently by using the GPU or other processors if we have are in a multi-core architecture environment. This way we will be ab;le to achieve significant speed-up for our ray-tracing program. 
+
+4.The current code generates an image under a perspective projection. 
 
 
