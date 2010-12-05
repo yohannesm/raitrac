@@ -70,6 +70,14 @@ GLfloat dotProd (vector* v0, vector* v1)
   return result;
 }
 
+//must call freePoint after this call 
+vector* crossProd(vector* v0, vector* v1){
+  vector* result = makePoint( v0->y * v1->z - v0->z * v1->y,
+                              v0->z * v1->x - v0->x * v1->z,
+                              v0->x * v1->y - v0->y * v1->x);
+  return result;
+}
+
 /* point on ray r parameterized by t is returned in p */
 void findPointOnRay(ray* r,double t,point* p) {
   p->x = r->start->x + t * r->dir->x;
@@ -106,6 +114,19 @@ ellipsoid* makeEllipsoid (GLfloat x1, GLfloat y1, GLfloat z1, GLfloat a,
   e->b = b;   /* radius */
   e->m = NULL;   /* material */
   return(e);
+}
+
+cylinder* makeCylinder(GLfloat x1,GLfloat y1,GLfloat z1,
+                       GLfloat x2,GLfloat y2,GLfloat z2, GLfloat r){
+  cylinder* cyl;
+  cyl = (cylinder*) malloc(sizeof(cylinder));
+
+  cyl->c->start = makePoint(x1, y1, z1);
+  cyl->c->dir   = makePoint(x2, y2, z2);
+  cyl->r = r; //radius
+  cyl->m = NULL;
+  return cyl;
+
 }
 
 
@@ -163,6 +184,8 @@ vector* normalize(vector* v){
     return result;
 }*/
 
+
+
 int rayEllipsoidIntersect(ray* r,ellipsoid* e,double* t) {
   vector p1, p2;   /* start of transformed ray */
   double a,b,c;  /* coefficients of quadratic equation */
@@ -218,4 +241,62 @@ void findEllipsoidNormal(ellipsoid* e, point* p, vector* n) {
   n->w = 0.0;
 }
 
+
+#if 0
+int rayCylinderIntersect(ray* r,cylinder* cyl,double* t) {
+  vector p1, p2;   /* start of transformed ray */
+  double a,b,c;  /* coefficients of quadratic equation */
+  double D;    /* discriminant */
+  point* d;
+
+  double a2 = e->a * e->a;
+  double b2 = e->b * e->b;
+  double a2b2 = a2 * b2;
+  
+  /* transform ray so that cylinder center is at origin */
+  /* don't use matrix, just translate! */
+  p1.x = r->start->x - e->f1->x;
+  p1.y = r->start->y - e->f1->y;
+  p1.z = r->start->z - e->f1->z;
+  p2.x = r->start->x - e->f2->x;
+  p2.y = r->start->y - e->f2->y;
+  p2.z = r->start->z - e->f2->z;
+  d = makePoint(r->dir->x, r->dir->y, r->dir->z);
+  normalize(d);
+
+  a = ( e->a * e->a  +  e->b * e->b) / a2b2;
+  b = b2 * ( 2*dotProd( &p1, d) ) + a2 * (2*dotProd(&p2, d))   ; 
+  b /= a2b2;
+  c = b2 * (dotProd(&p1, &p1) ) + a2 * (dotProd(&p2, &p2))   ; 
+  c = c / a2b2 - 1;
+
+  D = b * b - 4 * a * c;
+  
+  freePoint(d);
+  if (D < 0) {  /* no intersection */
+    return (FALSE);
+  }
+  else {
+    D = sqrt(D);
+    /* First check the root with the lower value of t: */
+    /* this one, since D is positive */
+    *t = (-b - D) / (2*a);
+    /* ignore roots which are less than zero (behind viewpoint) */
+    if (*t < 0) {
+      *t = (-b + D) / (2*a);
+    }
+    if (*t < 0) { return(FALSE); }
+    else return(TRUE);
+  }
+}
+
+/* normal vector of s at p is returned in n */
+//calculate the closest point here. 
+void findCylinderNormal(cylinder* c, point* p, vector* n) {
+  n->x = (p->x - c->c->x) / c->r;  
+  n->y = (p->y - s->c->y) / c->r;
+  n->z = (p->z - s->c->z) / c->r;
+  n->w = 0.0;
+}
+#endif
 
