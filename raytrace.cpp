@@ -31,6 +31,7 @@ void firstHit(ray*,point*,vector*,material**);
 sphere* s1;
 //ellipsoid * e1;
 cylinder* c1;
+plane* p1;
 std::vector<light*> lights;
 
 /* the viewing parameters: */
@@ -79,14 +80,16 @@ void display() {
 }
 
 void initScene () {
-  lights.push_back(makeLight(2, 2, 2, 1, 1, 1, .1));
+  lights.push_back(makeLight(4, 0, -5, 1, 1, 1, .1));
   //lights.push_back(makeLight(-3, 3, -2, 1, 1, 1, .1));
    s1 = makeSphere(0.0,0.0,-2.0,0.1);
-   //c1 = makeCylinder(-0.5, -0.5, -4.0, 
-                    // -0.5, -1.5, -4.0, 0.1);
+   c1 = makeCylinder(-0.5, -0.5, -4.0, 
+                     0.1);
+   p1 = makePlane( 0, 0, -1,   0.0, 0.0, -10);
   //e1 = makeEllipsoid(-0.0,0.0,-2.0,0.25, 0.0, 0.0, -2.0, 0.36);
-  s1->m = makeMaterial(0.0,0.1,1,0.3,0.9,1,125);
-  //c1->m = makeMaterial(0.0,1.0,0,1.3,0.9,1,125);
+  s1->m = makeMaterial(0.0,0.1,1 ,0.3,0.9,1,125);
+  c1->m = makeMaterial(0.0,0.1,1 , 1.3,0.4,0.0,0);
+  p1->m = makeMaterial(1.0,0.1,0.1 , 1.3,0.4,0.0,1);
   //e1->m = makeMaterial(0.0,0.1,1,0.3,0.9,1,125);
 
   
@@ -161,23 +164,54 @@ void traceRay(ray* r, color* c, int d) {
   }
 }
 
+int findMin(double  ttemp[], int hits[], int size){
+   int index = -1;
+   double min = ttemp[0];
+   bool found = false;
+   for(int i =0; i< size ; ++i){
+     if(ttemp[i] <= min && hits[i] == TRUE  || !found && hits[i] == TRUE){
+      min = ttemp[i];
+      index = i;
+     } 
+   found |= (hits[i] == 1);
+   }
+   return index;
+}
+
 /* firstHit */
 /* If something is hit, returns the finite intersection point p, 
    the normal vector n to the surface at that point, and the surface
    material m. If no hit, returns an infinite point (p->w = 0.0) */
 void firstHit(ray* r, point* p, vector* n, material* *m) {
-  double t = 0;     /* parameter value at first hit */
-  int hit = FALSE;
-  
-   hit = raySphereIntersect(r,s1,&t);
-  //hit =  rayEllipsoidIntersect(r, e1, &t);
-  if (hit) {
-    //*m = e1->m;
-    *m = s1->m;
-    findPointOnRay(r,t,p);
-    findSphereNormal(s1,p,n);
-    //findEllipsoidNormal(e1,p,n);
-  } else {
+  double ttemp[3] = {0, 0, 0};
+  int hits[3] = {0, 0, 0};
+  int boundSphere = 0;
+  int boundCyl = 1;
+   int boundPlane = 2;
+  hits[0] = raySphereIntersect(r,s1,&ttemp[0]);
+  hits[1] =  rayCylinderIntersect(r, c1, &ttemp[1]);
+  if(hits[0] || hits[1]) printf("hits \n");
+  hits[2] =  rayPlaneIntersect(r, p1, &ttemp[2]);
+  int val = findMin(ttemp, hits, 3);
+  double t = 0;
+  if(val!= -1){
+    t = ttemp[val];
+      findPointOnRay(r,t,p);
+    if(val <= boundSphere){
+      *m = s1->m;
+      findSphereNormal(s1,p,n);
+      printf("sphere \n ");
+   }
+   else if(val <= boundCyl){
+    *m = c1->m;
+    findCylinderNormal(c1,p,n);
+  }
+   else if(val <= boundPlane){
+    *m = p1->m;
+    findPlaneNormal(p1,p,n);
+   }
+    }
+  else {
     /* indicates no hit */
     p->w = 0.0;
   }
