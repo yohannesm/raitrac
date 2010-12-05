@@ -29,15 +29,16 @@ void firstHit(ray*,point*,vector*,material**);
 
 /* the scene: so far, just one sphere */
 sphere* s1;
-ellipsoid * e1;
+//ellipsoid * e1;
+cylinder* c1;
 std::vector<light*> lights;
 
 /* the viewing parameters: */
 point* viewpoint;
 GLfloat pnear;  /* distance from viewpoint to image plane */
 GLfloat fovx;  /* x-angle of view frustum */
-int width = 500;     /* width of window in pixels */
-int height = 350;    /* height of window in pixels */
+int width = 800;     /* width of window in pixels */
+int height = 600;    /* height of window in pixels */
 
 int main (int argc, char** argv) {
   int win;
@@ -59,7 +60,7 @@ void init(int w, int h) {
   /* OpenGL setup */
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+  glOrtho(0.0, 2.0, 0.0, 2.0, -2.0, 2.0);
   glClearColor(0.0, 0.0, 0.0, 0.0);  
 
   /* low-level graphics setup */
@@ -80,10 +81,13 @@ void display() {
 void initScene () {
   lights.push_back(makeLight(2, 2, 2, 1, 1, 1, .1));
   //lights.push_back(makeLight(-3, 3, -2, 1, 1, 1, .1));
-  // s1 = makeSphere(0.0,0.0,-2.0,0.25);
-  e1 = makeEllipsoid(-0.0,0.0,-2.0,0.25, 0.0, 0.0, -2.0, 0.36);
-  //s1->m = makeMaterial(0.0,0.1,1,0.3,0.9,1,125);
-  e1->m = makeMaterial(0.0,0.1,1,0.3,0.9,1,125);
+   s1 = makeSphere(0.0,0.0,-2.0,0.1);
+   //c1 = makeCylinder(-0.5, -0.5, -4.0, 
+                    // -0.5, -1.5, -4.0, 0.1);
+  //e1 = makeEllipsoid(-0.0,0.0,-2.0,0.25, 0.0, 0.0, -2.0, 0.36);
+  s1->m = makeMaterial(0.0,0.1,1,0.3,0.9,1,125);
+  //c1->m = makeMaterial(0.0,1.0,0,1.3,0.9,1,125);
+  //e1->m = makeMaterial(0.0,0.1,1,0.3,0.9,1,125);
 
   
 }
@@ -165,13 +169,14 @@ void firstHit(ray* r, point* p, vector* n, material* *m) {
   double t = 0;     /* parameter value at first hit */
   int hit = FALSE;
   
-  // hit = raySphereIntersect(r,s1,&t);
-  hit =  rayEllipsoidIntersect(r, e1, &t);
+   hit = raySphereIntersect(r,s1,&t);
+  //hit =  rayEllipsoidIntersect(r, e1, &t);
   if (hit) {
-    *m = e1->m;
+    //*m = e1->m;
+    *m = s1->m;
     findPointOnRay(r,t,p);
-    //findSphereNormal(s1,p,n);
-    findEllipsoidNormal(e1,p,n);
+    findSphereNormal(s1,p,n);
+    //findEllipsoidNormal(e1,p,n);
   } else {
     /* indicates no hit */
     p->w = 0.0;

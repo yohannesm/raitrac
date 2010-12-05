@@ -33,6 +33,9 @@ typedef struct ray {
   vector* dir;
 } ray;
 
+//a line is just a ray
+typedef ray line;
+
 typedef struct material {
   /* color */
   GLfloat r;
@@ -66,6 +69,12 @@ typedef struct ellipsoid{
    material * m;
 } ellipsoid;
 
+typedef struct cylinder{
+   line* c; // center of cylinder
+   GLfloat r; //radius of the cylinder
+   material* m;
+}cylinder;
+
 typedef struct light {
   GLfloat x;
   GLfloat y;
@@ -88,6 +97,7 @@ GLfloat dotProd (vector* v0, vector* v1);
 void normalize(vector* v);
 sphere* makeSphere(GLfloat, GLfloat, GLfloat, GLfloat);
 ellipsoid* makeEllipsoid(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+cylinder* makeCylinder(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
 point* makePoint(GLfloat, GLfloat, GLfloat);
 point* copyPoint(point *);
 void freePoint(point *);

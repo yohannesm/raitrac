@@ -1,7 +1,8 @@
 /******************************************************************/
 /*         Lighting functions                                     */
 /*                                                                */
-/* Group Members: <FILL IN>                                       */
+/* Group Members: Yohannes Himawan
+ *                David Lee*/
 /******************************************************************/
 
 #ifdef _WIN32
