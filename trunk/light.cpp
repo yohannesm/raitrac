@@ -66,9 +66,10 @@ void shade(point* p, vector* n, material* m, vector* in, color* c, int d, std::v
 
 for(uint i=0; i<lights.size(); i++){
   // do diffuse
-  // this will change to a for loop with multiple lights
+  // this will change to a for loop with multiple lightsa
+  //normalize(n);
   vector* lightVec = makePoint(lights[i]->x - p->x, lights[i]->y - p->y, lights[i]->z - p->z);
-  GLfloat dp = dotProd(lightVec, n);
+  GLfloat dp = dotProd(lightVec, n) ;
   if (dp < 0)
     dp = 0;
   c->r += m->dif * dp * (lights[i]->r * lights[i]->i);

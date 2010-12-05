@@ -70,7 +70,7 @@ typedef struct ellipsoid{
 } ellipsoid;
 
 typedef struct cylinder{
-   line* c; // center of cylinder
+   point* c; // center of cylinder
    GLfloat r; //radius of the cylinder
    material* m;
 }cylinder;
@@ -87,6 +87,12 @@ typedef struct light {
   GLfloat i;
 } light;
 
+typedef struct plane{
+  vector* norm;
+  point* p;
+  material* m;
+} plane;
+
 
 
 /* functions in raytrace.cpp */
@@ -97,7 +103,7 @@ GLfloat dotProd (vector* v0, vector* v1);
 void normalize(vector* v);
 sphere* makeSphere(GLfloat, GLfloat, GLfloat, GLfloat);
 ellipsoid* makeEllipsoid(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
-cylinder* makeCylinder(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+cylinder* makeCylinder(GLfloat, GLfloat, GLfloat, GLfloat);
 point* makePoint(GLfloat, GLfloat, GLfloat);
 point* copyPoint(point *);
 void freePoint(point *);
@@ -107,6 +113,11 @@ int raySphereIntersect(ray*,sphere*,double*);
 void findSphereNormal(sphere*,point*,vector*);
 int rayEllipsoidIntersect(ray*,ellipsoid*,double*);
 void findEllipsoidNormal(ellipsoid*,point*,vector*);
+int rayCylinderIntersect(ray* r,cylinder* cyl,double* t) ;
+void findCylinderNormal(cylinder* c, point* p, vector* n);
+plane* makePlane(GLfloat vx, GLfloat vy, GLfloat vz,  GLfloat x, GLfloat y, GLfloat z);
+int rayPlaneIntersect(ray* r,plane* pl,double* t) ;
+void findPlaneNormal(plane* p, point* p, vector* n) ;
 
 /* functions in light.cpp */
 light* makeLight(GLfloat x, GLfloat y, GLfloat z, GLfloat r, GLfloat g, GLfloat b, GLfloat i);
