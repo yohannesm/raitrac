@@ -5,8 +5,12 @@
  * for compiling, etc., if you did something besides the standard
  * Makefile.  Also, document any additional features in this file.
  *
- * Group Members:
+ * Group Members:Yohannes Himawan, David Lee
  *
  */
+
+ Our normals for the cylinder are somewhat off. We still get dots in the the shadows but only after we added reflections. We did NOT do transparency. We have planes, cylinders (partially), and spheres. We attempted to do ellipsoid but could not get the normals and intercepts correctly. We can use multiple lights but it messes up the cylinder's color. 
+
+ We do have lights, diffuse and specular lighting, shadows, and reflections.
 
 
