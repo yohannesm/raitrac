@@ -301,7 +301,7 @@ void findCylinderNormal(cylinder* cyl, point* p, vector* n) {
   n->z = (p->z - c->c->z) / c->r;
   n->w = 0.0;
   */
- vector* A = makePoint(cyl->c->x, cyl->c->y + 2.0, cyl->c->z);
+ vector* A = makePoint(cyl->c->x, cyl->c->y - 1.0, cyl->c->z);
  vector* B = makePoint(p->x - cyl->c->x, p->y - cyl->c->y, p->z - cyl->c->z);
  GLfloat mag2 = A->x * A->x + A->y * A->y + A->z * A->z; 
  GLfloat dpAB = dotProd(A, B);
@@ -309,17 +309,17 @@ void findCylinderNormal(cylinder* cyl, point* p, vector* n) {
  vector* proj = makePoint(A->x * dpAB, A->y*dpAB, A->z*dpAB);
  //have the projection vector, now find the angle
  //reinitialize the dotProd
- dpAB = dotProd(A, B);
- GLfloat magA = sqrt(A->x * A->x + A->y * A->y + A->z * A->z); 
- GLfloat magB = sqrt(B->x * B->x + B->y * B->y + B->z * B->z); 
- GLfloat magAB = magA * magB;
- GLfloat theta = acos( dpAB/magAB);
+ //dpAB = dotProd(A, B);
+ //GLfloat magA = sqrt(A->x * A->x + A->y * A->y + A->z * A->z); 
+ //GLfloat magB = sqrt(B->x * B->x + B->y * B->y + B->z * B->z); 
+ //GLfloat magAB = magA * magB;
+ //GLfloat theta = acos( dpAB/magAB);
 
  point* Px = makePoint(cyl->c->x + proj->x, cyl->c->y + proj->y, cyl->c->z + proj->z); 
  vector* I = makePoint(p->x - Px->x,  p->y - Px->y, p->z - Px->z); 
 
   n->x = (I->x) / cyl->r;  
-  n->y = (I->y) / cyl->r;  
+  n->y = 0.0;//(I->y) / cyl->r;  
   n->z = (I->z) / cyl->r;  
   n->w = 0.0;
  
@@ -336,9 +336,10 @@ void findCylinderNormal(cylinder* cyl, point* p, vector* n) {
 /* returns TRUE if ray r hits plane s, with parameter value in t */
 int rayPlaneIntersect(ray* r,plane* pl,double* t) {
    vector * v = makePoint(r->start->x - pl->p->x, r->start->y - pl->p->y, r->start->z - pl->p->z); 
-   *t = (double) - dotProd( pl->norm, v) / dotProd(  pl->norm,  r->dir);
+   GLfloat temp = - dotProd( pl->norm, v) / dotProd(  pl->norm,  r->dir);
+   *t = (double) temp;
  freePoint(v);
- if(t<0) return FALSE;
+ if((*t) < 0) return FALSE;
  else return TRUE;
 }
 

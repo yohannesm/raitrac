@@ -80,16 +80,19 @@ void display() {
 }
 
 void initScene () {
-  lights.push_back(makeLight(4, 0, -5, 1, 1, 1, .1));
-  //lights.push_back(makeLight(-3, 3, -2, 1, 1, 1, .1));
-   s1 = makeSphere(0.0,0.0,-2.0,0.1);
-   c1 = makeCylinder(-0.5, -0.5, -4.0, 
+   //lights.push_back(makeLight(4, 0, -5, 1, 1, 1, .1));
+   lights.push_back(makeLight(0.0, 0.5, -1, 1, 1, 1, 1));
+   //lights.push_back(makeLight(-3, 3, -2, 1, 1, 1, .1));
+   //lights.push_back(makeLight(5, 2, -0.5, 0.5, 0.5, 0.5, .1));
+   s1 = makeSphere(0.0,0.0,-3.0,0.1);
+   c1 = makeCylinder(-0.5, 0.0, -2.0, 
                      0.1);
-   p1 = makePlane( 0, 0, -1,   0.0, 0.0, -10);
+   p1 = makePlane( 0, 1, 0,   0.0, -.3, -1.0);
   //e1 = makeEllipsoid(-0.0,0.0,-2.0,0.25, 0.0, 0.0, -2.0, 0.36);
   s1->m = makeMaterial(0.0,0.1,1 ,0.3,0.9,1,125);
-  c1->m = makeMaterial(0.0,0.1,1 , 1.3,0.4,0.0,0);
-  p1->m = makeMaterial(1.0,0.1,0.1 , 1.3,0.4,0.0,1);
+  c1->m = makeMaterial(0.0,0.1,1 ,0.5,0.9,0,125);
+  //c1->m = makeMaterial(0.0,0.9,0.1 , 0.5,0.5, 0.5,1);
+  p1->m = makeMaterial(0.7,0.7,0.7 , 0.4,0.2,0.3,1);
   //e1->m = makeMaterial(0.0,0.1,1,0.3,0.9,1,125);
 
   
@@ -147,6 +150,7 @@ void drawScene () {
 
 /* returns the color seen by ray r in parameter c */
 /* d is the recursive depth */
+//color = color intensity of the ray
 void traceRay(ray* r, color* c, int d) {
   point p;  /* first intersection point */
   vector n;
@@ -207,12 +211,46 @@ void firstHit(ray* r, point* p, vector* n, material* *m) {
    else if(val <= boundPlane){
     *m = p1->m;
     findPlaneNormal(p1,p,n);
-   }
+   } 
+   else {
+    /* indicates no hit */
+    p->w = 0.0;
+  }
     }
   else {
     /* indicates no hit */
     p->w = 0.0;
   }
 
+}
+
+bool lightHit(ray* r, point* p ){
+  bool res = true;
+  vector* test = makePoint(p->x - r->start->x, p->y - r->start->y, p->z - r->start->z); 
+  normalize(test);
+  //vector* dir = makePoint(r->dir->x, r->dir->y, r->dir->z); 
+  //normalize(dir);
+  GLfloat tx = test->x / r->dir->x;
+  GLfloat ty = test->y / r->dir->y;
+  GLfloat tz = test->z / r->dir->z;
+  if( tx == ty  && ty == tz){
+   double ttemp[3] = {0, 0, 0};
+  int hits[3] = {0, 0, 0};
+  int boundSphere = 0;
+  int boundCyl = 1;
+   int boundPlane = 2;
+  hits[0] = raySphereIntersect(r,s1,&ttemp[0]);
+  hits[1] =  rayCylinderIntersect(r, c1, &ttemp[1]);
+  hits[2] =  rayPlaneIntersect(r, p1, &ttemp[2]);
+  
+  for(int i=0; i< 3; ++i){
+    if(ttemp[i] < tx && hits[i] == TRUE){
+    res = false;
+    break;
+    }
+  }
+  freePoint(test);
+}
+ return res;
 }
 
