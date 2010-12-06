@@ -81,16 +81,17 @@ void display() {
 
 void initScene () {
    //lights.push_back(makeLight(4, 0, -5, 1, 1, 1, .1));
-   lights.push_back(makeLight(0.0, 0.5, -1, 1, 1, 1, 1));
+  lights.push_back(makeLight(0.0, 0.5, -1, 1, 1, 1, 1));
    //lights.push_back(makeLight(-3, 3, -2, 1, 1, 1, .1));
    //lights.push_back(makeLight(5, 2, -0.5, 0.5, 0.5, 0.5, .1));
-   s1 = makeSphere(0.0,0.0,-3.0,0.1);
+   s1 = makeSphere(-0.2,0.0,-3.0,0.1);
    c1 = makeCylinder(-0.5, 0.0, -2.0, 
                      0.1);
    p1 = makePlane( 0, 1, 0,   0.0, -.3, -1.0);
   //e1 = makeEllipsoid(-0.0,0.0,-2.0,0.25, 0.0, 0.0, -2.0, 0.36);
-  s1->m = makeMaterial(0.0,0.1,1 ,0.3,0.9,1,125);
-  c1->m = makeMaterial(0.0,0.1,1 ,0.5,0.9,0,125);
+  s1->m = makeMaterial(0.0,0.1,1 ,0.3,0.9,5,125);
+  //s1->m = makeMaterial(0.0,0.0,0.0 ,0.3,0.9,1,125);
+  c1->m = makeMaterial(1.0,1.0,0.0  ,0.9,0.9,0.1,125);
   //c1->m = makeMaterial(0.0,0.9,0.1 , 0.5,0.5, 0.5,1);
   p1->m = makeMaterial(0.7,0.7,0.7 , 0.4,0.2,0.3,1);
   //e1->m = makeMaterial(0.0,0.1,1,0.3,0.9,1,125);
@@ -112,6 +113,9 @@ void drawScene () {
   point direction; 
   ray r;
   color c;
+ // c.r = 0.0;
+ // c.g = 0.0;
+ // c.b = 0.0;
 
   /* initialize */
   worldPix.w = 1.0;
@@ -141,7 +145,7 @@ void drawScene () {
       calculateDirection(viewpoint,&worldPix,&direction);
 
       /* trace the ray! */
-      traceRay(&r,&c,0);
+      traceRay(&r,&c,1);
       /* write the pixel! */
       drawPixel(i,j,c.r,c.g,c.b);
     }
