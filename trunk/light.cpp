@@ -108,14 +108,35 @@ for(uint i=0; i<lights.size(); i++){
   dp = dotProd(h, n);
   if (dp < 0)
     dp = 0;
+
+
+  GLfloat nl = 2 * dotProd(n, lightVec);
+  ray flec;
+  flec.dir = makePoint( nl * n->x - lightVec->x, nl * n->y - lightVec->y, nl * n->z - lightVec->z); 
+  flec.start = makePoint(p->x + EPSILON *(flec.dir->x) , 
+                         p->y + EPSILON *(flec.dir->y),   
+                         p->z + EPSILON *(flec.dir->z) );
+  color flecColor;
+  if(d> 0)
+    traceRay(&flec, &flecColor, d-1);
+    else{ 
+  flecColor.r = 1;//c->r;
+  flecColor.g = 1;//c->g;
+  flecColor.b = 1;//c->b;
+    }
+ 
+  normalize(flec.dir);
+  //dp = dotProd(flec.dir, in);
   dp = pow(dp, m->shi);
-  c->r += m->spe * dp * (lights[i]->r * lights[i]->i);
-  c->g += m->spe * dp * (lights[i]->g * lights[i]->i);
-  c->b += m->spe * dp * (lights[i]->b * lights[i]->i);
+  c->r += m->spe * dp * flecColor.r *  (lights[i]->r * lights[i]->i);
+  c->g += m->spe * dp * flecColor.g * (lights[i]->g * lights[i]->i);
+  c->b += m->spe * dp * flecColor.b *  (lights[i]->b * lights[i]->i);
 
   freePoint(lightVec);
   freePoint(shadowRay.start);
   freePoint(LightPt);
+  freePoint(flec.start);
+  freePoint(flec.dir);
   
   
 }  
