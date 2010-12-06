@@ -9,6 +9,7 @@
 /* constants */
 #define TRUE 1
 #define FALSE 0
+#define EPSILON 0.001
 
 #define PI 3.14159265358979323846264338327
 #include <vector>
@@ -101,6 +102,7 @@ void traceRay(ray*, color*, int);
 /* functions in geometry.cpp */
 GLfloat dotProd (vector* v0, vector* v1);
 void normalize(vector* v);
+bool pointsEqual(point* a, point* b);
 sphere* makeSphere(GLfloat, GLfloat, GLfloat, GLfloat);
 ellipsoid* makeEllipsoid(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
 cylinder* makeCylinder(GLfloat, GLfloat, GLfloat, GLfloat);
@@ -123,6 +125,8 @@ void findPlaneNormal(plane* p, point* p, vector* n) ;
 light* makeLight(GLfloat x, GLfloat y, GLfloat z, GLfloat r, GLfloat g, GLfloat b, GLfloat i);
 material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif, GLfloat spe, GLfloat shi);
 void shade(point*,vector*,material*,vector*,color*,int, std::vector<light*>&);
+void firstHit(ray* r, point* p, vector* n, material* *m) ;
+bool lightHit(ray* r, point* p );
 
 /* global variables */
 extern int width;

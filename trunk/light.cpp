@@ -16,6 +16,8 @@
 #include "common.h"
 #include "raytrace.h"
 
+bool testShadow = true;
+
 light* makeLight(GLfloat x, GLfloat y, GLfloat z, GLfloat r, GLfloat g, GLfloat b, GLfloat i)
 {
   light* l;
@@ -54,10 +56,15 @@ material* makeMaterial(GLfloat r, GLfloat g, GLfloat b, GLfloat amb, GLfloat dif
 
 /* LIGHTING CALCULATIONS */
 
+bool pointsEqual(point* a, point* b){
+return (a->x == b->x) &&  (a->y == b->y) &&  (a->z == b->z);
+}
+
 /* shade */
 /* color of point p with normal vector n and material m returned in c */
-/* in is the direction of the incoming ray and d is the recusive depth */
+/* in is the direction of the incoming ray and d is the recursive depth */
 void shade(point* p, vector* n, material* m, vector* in, color* c, int d, std::vector<light*>& lights) {
+if(d==-1) return;
 
   /* so far, just finds ambient component of color */
   c->r = m->amb * m->r;
@@ -68,14 +75,33 @@ for(uint i=0; i<lights.size(); i++){
   // do diffuse
   // this will change to a for loop with multiple lightsa
   //normalize(n);
+  ray shadowRay;
+  point* LightPt = makePoint(lights[i]->x , lights[i]->y , lights[i]->z );
+  shadowRay.dir = makePoint(lights[i]->x - p->x, lights[i]->y - p->y, lights[i]->z - p->z);
+  // shadowRay.dir = makePoint(p->x - lights[i]->x, p->y- lights[i]->y, p->z - lights[i]->z);
+  
+  shadowRay.start = makePoint(p->x + EPSILON *(shadowRay.dir->x)
+                               , p->y + EPSILON *(shadowRay.dir->y)
+                               , p->z + EPSILON *(shadowRay.dir->z));
+                               /*
+  shadowRay.start = makePoint(LightPt->x + EPSILON *(shadowRay.dir->x)
+                               , LightPt->y + EPSILON *(shadowRay.dir->y)
+                               , LightPt->z + EPSILON *(shadowRay.dir->z));*/
+  point testPt;
+  testPt.w = 1.0;
+  bool inLight = (lightHit(&shadowRay, LightPt));
+
+  //if(  pointsEqual(&testPt, LightPt)){
   vector* lightVec = makePoint(lights[i]->x - p->x, lights[i]->y - p->y, lights[i]->z - p->z);
   GLfloat dp = dotProd(lightVec, n) ;
+ if( inLight ){
+
   if (dp < 0)
     dp = 0;
-  c->r += m->dif * dp * (lights[i]->r * lights[i]->i);
-  c->g += m->dif * dp * (lights[i]->g * lights[i]->i);
-  c->b += m->dif * dp * (lights[i]->b * lights[i]->i);
-  
+  c->r += m->r * m->dif * dp * (lights[i]->r * lights[i]->i);
+  c->g += m->g * m->dif * dp * (lights[i]->g * lights[i]->i);
+  c->b += m->b * m->dif * dp * (lights[i]->b * lights[i]->i);
+  }
   // do specular
   vector* h = makePoint(in->x + lightVec->x, in->y + lightVec->y, in->z + lightVec->z);
   normalize(h);
@@ -88,12 +114,17 @@ for(uint i=0; i<lights.size(); i++){
   c->b += m->spe * dp * (lights[i]->b * lights[i]->i);
 
   freePoint(lightVec);
+  freePoint(shadowRay.start);
+  freePoint(LightPt);
+  
+  
 }  
   /* clamp color values to 1.0 */
   if (c->r > 1.0) c->r = 1.0;
   if (c->g > 1.0) c->g = 1.0;
   if (c->b > 1.0) c->b = 1.0;
-  
+
+
 
 }
 
